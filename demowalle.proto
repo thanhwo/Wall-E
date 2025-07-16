@@ -1,84 +1,61 @@
 #VRML_SIM R2025a utf8
 
+# Định nghĩa một robot mới có tên là demoRobot, với 2 tham số truyền vào là vị trí và hướng
 PROTO demoRobot[
-  field SFVec3f translation 0 0.05 0
-  field SFRotation rotation 0 1 0 0
+  field SFVec3f translation 0.331 0.123 0     # Vị trí ban đầu của robot
+  field SFRotation rotation 1 0 0 1.52      # Góc xoay ban đầu của robot
 ] {
   Robot {
-    translation IS translation
-    rotation IS rotation
-    children [
+    translation IS translation           # Gán vị trí từ tham số truyền vào
+    rotation IS rotation                 # Gán góc quay từ tham số truyền vào
+    children [                           # Các thành phần con cấu thành robot
 
-      # Thân chính
+      # --- Thân chính ---
       Solid {
-        name "body"
-        translation 0 0.1 0
+        name "body"                      # Tên phần thân
+        translation 0 0.1 0              # Đặt thân lên cao khỏi mặt đất
         children [
           Shape {
             appearance Appearance {
               material Material {
-                diffuseColor 1 0.8 0.2
+                diffuseColor 1 0.8 0.2   # Màu vàng cam
               }
             }
             geometry Box {
-              size 0.25 0.2 0.2
+              size 0.25 0.2 0.2          # Kích thước hình hộp
             }
           }
         ]
         boundingObject Box {
-          size 0.25 0.2 0.2
+          size 0.25 0.2 0.2              # Hình dạng vật lý của thân để va chạm
         }
-        physics Physics {}
+        physics Physics {}               # Bật mô phỏng vật lý
       }
 
-      # Mắt
-      Solid {
-        name "eye"
-        translation 0 0.25 0.08
-        children [
-          Shape {
-            appearance Appearance {
-              material Material {
-                diffuseColor 0.2 0.2 0.2
-              }
-            }
-            geometry Cylinder {
-              radius 0.03
-              height 0.08
-            }
-          }
-        ]
-        boundingObject Cylinder {
-          radius 0.03
-          height 0.08
-        }
-        physics Physics {}
-      }
-
-      # Tay trái (servo)
+      # --- Tay trái điều khiển bằng servo ---
       HingeJoint {
         jointParameters HingeJointParameters {
-          axis 1 0 0
-          anchor -0.18 0.15 0
+          axis 1 0 0                     # Xoay quanh trục X (gập lên xuống)
+          anchor -0.18 0.15 0            # Tâm xoay nằm bên trái thân
         }
         device [
           RotationalMotor {
-            name "left_arm_servo"
-            maxVelocity 1.57
+            name "left_arm_servo"        # Tên motor servo điều khiển tay trái
+            maxVelocity 1.57             # Vận tốc tối đa (rad/s)
           }
         ]
         endPoint Solid {
           name "left_arm"
-          translation -0.18 0.15 0
+          translation -0.18 0.15 0       # Vị trí tay trái
           children [
             Shape {
               appearance Appearance {
                 material Material {
-                  diffuseColor 0.5 0.3 0.1
+                  diffuseColor 0.5 0.3 0.1   # Màu nâu
                 }
               }
               geometry Box {
-                size 0.05 0.05 0.1
+                size 0.05 0.05 0.1       # Kích thước tay
               }
             }
           ]
@@ -89,11 +66,11 @@ PROTO demoRobot[
         }
       }
 
-      # Tay phải (servo)
+      # --- Tay phải điều khiển bằng servo ---
       HingeJoint {
         jointParameters HingeJointParameters {
           axis 1 0 0
-          anchor 0.18 0.15 0
+          anchor 0.18 0.15 0             # Gắn bên phải thân
         }
         device [
           RotationalMotor {
@@ -123,11 +100,11 @@ PROTO demoRobot[
         }
       }
 
-      # Đầu (servo)
+      # --- Đầu xoay bằng servo ---
       HingeJoint {
         jointParameters HingeJointParameters {
-          axis 0 1 0
-          anchor 0 0.25 0
+          axis 0 1 0                     # Xoay quanh trục Y (quay trái/phải)
+          anchor 0 0.25 0                # Gắn trên đầu thân
         }
         device [
           RotationalMotor {
@@ -157,11 +134,12 @@ PROTO demoRobot[
         }
       }
 
-      # Bánh xe trái
+      # --- Bánh xe trái (có thể lăn) ---
       HingeJoint {
+        parent "body"
         jointParameters HingeJointParameters {
-          axis 0 1 0
-          anchor -0.15 0.05 0.1
+          axis 1 0 0                     # Bánh quay quanh trục X (lăn về trước/sau)
+          anchor -0.15 0.05 0.1         # Vị trí tâm bánh trái
         }
         device [
           RotationalMotor {
@@ -172,11 +150,12 @@ PROTO demoRobot[
         endPoint Solid {
           name "left_wheel"
           translation -0.15 0.05 0.1
+          rotation 0 1 0 1.5708          # Xoay hình bánh xe 90 độ quanh trục X (dựng đứng)
           children [
             Shape {
               appearance Appearance {
                 material Material {
-                  diffuseColor 0.1 0.1 0.1
+                  diffuseColor 0.1 0.1 0.1  # Màu đen
                 }
               }
               geometry Cylinder {
@@ -193,10 +172,11 @@ PROTO demoRobot[
         }
       }
 
-      # Bánh xe phải
+      # --- Bánh xe phải (có thể lăn) ---
       HingeJoint {
+        parent "body"
         jointParameters HingeJointParameters {
-          axis 0 1 0
+          axis 1 0 0
           anchor 0.15 0.05 0.1
         }
         device [
@@ -208,6 +188,7 @@ PROTO demoRobot[
         endPoint Solid {
           name "right_wheel"
           translation 0.15 0.05 0.1
+          rotation 0 1 0 1.5708
           children [
             Shape {
               appearance Appearance {
@@ -229,6 +210,6 @@ PROTO demoRobot[
         }
       }
     ]
-    controller "wall-e-controller"
+    controller "wall-e-controller"  # Tên file controller Python
   }
 }
