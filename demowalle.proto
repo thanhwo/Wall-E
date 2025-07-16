@@ -1,0 +1,234 @@
+#VRML_SIM R2025a utf8
+
+PROTO demoRobot[
+  field SFVec3f translation 0 0.05 0
+  field SFRotation rotation 0 1 0 0
+] {
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    children [
+
+      # Thân chính
+      Solid {
+        name "body"
+        translation 0 0.1 0
+        children [
+          Shape {
+            appearance Appearance {
+              material Material {
+                diffuseColor 1 0.8 0.2
+              }
+            }
+            geometry Box {
+              size 0.25 0.2 0.2
+            }
+          }
+        ]
+        boundingObject Box {
+          size 0.25 0.2 0.2
+        }
+        physics Physics {}
+      }
+
+      # Mắt
+      Solid {
+        name "eye"
+        translation 0 0.25 0.08
+        children [
+          Shape {
+            appearance Appearance {
+              material Material {
+                diffuseColor 0.2 0.2 0.2
+              }
+            }
+            geometry Cylinder {
+              radius 0.03
+              height 0.08
+            }
+          }
+        ]
+        boundingObject Cylinder {
+          radius 0.03
+          height 0.08
+        }
+        physics Physics {}
+      }
+
+      # Tay trái (servo)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 1 0 0
+          anchor -0.18 0.15 0
+        }
+        device [
+          RotationalMotor {
+            name "left_arm_servo"
+            maxVelocity 1.57
+          }
+        ]
+        endPoint Solid {
+          name "left_arm"
+          translation -0.18 0.15 0
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.5 0.3 0.1
+                }
+              }
+              geometry Box {
+                size 0.05 0.05 0.1
+              }
+            }
+          ]
+          boundingObject Box {
+            size 0.05 0.05 0.1
+          }
+          physics Physics {}
+        }
+      }
+
+      # Tay phải (servo)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 1 0 0
+          anchor 0.18 0.15 0
+        }
+        device [
+          RotationalMotor {
+            name "right_arm_servo"
+            maxVelocity 1.57
+          }
+        ]
+        endPoint Solid {
+          name "right_arm"
+          translation 0.18 0.15 0
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.5 0.3 0.1
+                }
+              }
+              geometry Box {
+                size 0.05 0.05 0.1
+              }
+            }
+          ]
+          boundingObject Box {
+            size 0.05 0.05 0.1
+          }
+          physics Physics {}
+        }
+      }
+
+      # Đầu (servo)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 0.25 0
+        }
+        device [
+          RotationalMotor {
+            name "head_servo"
+            maxVelocity 1.57
+          }
+        ]
+        endPoint Solid {
+          name "head"
+          translation 0 0.25 0
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.5 0.2
+                }
+              }
+              geometry Box {
+                size 0.06 0.06 0.06
+              }
+            }
+          ]
+          boundingObject Box {
+            size 0.06 0.06 0.06
+          }
+          physics Physics {}
+        }
+      }
+
+      # Bánh xe trái
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor -0.15 0.05 0.1
+        }
+        device [
+          RotationalMotor {
+            name "left_motor"
+            maxVelocity 10
+          }
+        ]
+        endPoint Solid {
+          name "left_wheel"
+          translation -0.15 0.05 0.1
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.1 0.1 0.1
+                }
+              }
+              geometry Cylinder {
+                radius 0.05
+                height 0.03
+              }
+            }
+          ]
+          boundingObject Cylinder {
+            radius 0.05
+            height 0.03
+          }
+          physics Physics {}
+        }
+      }
+
+      # Bánh xe phải
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0.15 0.05 0.1
+        }
+        device [
+          RotationalMotor {
+            name "right_motor"
+            maxVelocity 10
+          }
+        ]
+        endPoint Solid {
+          name "right_wheel"
+          translation 0.15 0.05 0.1
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.1 0.1 0.1
+                }
+              }
+              geometry Cylinder {
+                radius 0.05
+                height 0.03
+              }
+            }
+          ]
+          boundingObject Cylinder {
+            radius 0.05
+            height 0.03
+          }
+          physics Physics {}
+        }
+      }
+    ]
+    controller "wall-e-controller"
+  }
+}
