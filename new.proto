@@ -29,6 +29,33 @@ PROTO demoRobot[
               size 0.25 0.2 0.2                # Kích thước thân: chiều rộng, cao, sâu
             }
           },
+                    # --- Bánh phụ phía trước (caster wheel) ---
+             Solid {
+            name "front_wheel"
+            translation 0 -0.125 0.1          # Dưới và phía trước thân
+            rotation 0 1 0 1.5708               # Nằm ngang
+            children [
+              Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.2 0.2 0.2    # Màu xám đậm
+                  }
+                }
+                geometry Cylinder {
+                  radius 0.025
+                  height 0.02
+                }
+              }
+            ]
+            boundingObject Cylinder {
+              radius 0.025
+              height 0.02
+            }
+            physics Physics {
+              mass 0.1
+            }
+          },
+
 
           # --- Tay trái gắn bằng servo ---
           HingeJoint {
@@ -136,7 +163,7 @@ PROTO demoRobot[
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 1 0 0                        # Trục quay là trục X (quay tới lui)
-              anchor -0.15 -0.1 0.1             # Gắn gần sát thân
+              anchor -0.15 -0.1 -0.1             # Gắn gần sát thân
             }
             device [
               RotationalMotor {
@@ -146,7 +173,7 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "left_wheel"
-              translation -0.15 -0.1 0.1
+              translation -0.15 -0.1 -0.1
               rotation 0 1 0 1.5708             # Quay hình trụ để nằm ngang
               children [
                 Shape {
@@ -173,7 +200,7 @@ PROTO demoRobot[
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 1 0 0
-              anchor 0.15 -0.1 0.1
+              anchor 0.15 -0.1 -0.1
             }
             device [
               RotationalMotor {
@@ -183,7 +210,7 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "right_wheel"
-              translation 0.15 -0.1 0.1
+              translation 0.15 -0.1 -0.1
               rotation 0 1 0 1.5708
               children [
                 Shape {
