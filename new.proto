@@ -1,53 +1,55 @@
 #VRML_SIM R2025a utf8
 
-# Định nghĩa một robot có tên là demoRobot với các tham số đầu vào là vị trí và hướng
+# Định nghĩa một robot có tên là demoRobot với hai tham số đầu vào: vị trí và góc xoay
 PROTO demoRobot[
   field SFVec3f translation 0.331 0.123 0     # Vị trí ban đầu của robot trong không gian 3D
   field SFRotation rotation 1 0 0 1.52        # Góc xoay ban đầu của robot (quanh trục X)
 ] {
   Robot {
-    translation IS translation                 # Gán vị trí đầu vào cho robot
-    rotation IS rotation                       # Gán góc xoay đầu vào cho robot
+    translation IS translation                 # Gán giá trị vị trí từ tham số đầu vào
+    rotation IS rotation                       # Gán giá trị góc xoay từ tham số đầu vào
+
     children [
 
       # --- Thân chính của robot ---
       Solid {
         name "body"                            # Đặt tên thân là 'body'
-        translation 0 0.1 1                    # Nhấc thân lên khỏi mặt đất một khoảng
-        children [                             # Các thành phần con gắn với thân
+        translation 0 0.1 1                    # Dời thân lên cao để không nằm trên mặt đất
 
-          # Hình dạng thân
+        children [
+
+          # Hình khối thể hiện thân robot
           Shape {
             appearance Appearance {
               material Material {
-                diffuseColor 1 0.8 0.2         # Màu thân là vàng cam
+                diffuseColor 1 0.8 0.2         # Màu thân: vàng cam
               }
             }
             geometry Box {
-              size 0.25 0.2 0.2                # Kích thước hình hộp đại diện thân
+              size 0.25 0.2 0.2                # Kích thước thân: chiều rộng, cao, sâu
             }
           },
 
-          # --- Tay trái (servo) ---
+          # --- Tay trái gắn bằng servo ---
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 1 0 0                       # Trục xoay là trục X (gập lên xuống)
-              anchor -0.18 0.15 0              # Tâm xoay tay trái
+              anchor -0.18 0.05 0              # Vị trí bản lề gắn tay trái
             }
             device [
               RotationalMotor {
-                name "left_arm_servo"          # Tên thiết bị servo tay trái
-                maxVelocity 1.57
+                name "left_arm_servo"          # Tên động cơ điều khiển tay trái
+                maxVelocity 1.57               # Tốc độ quay tối đa
               }
             ]
             endPoint Solid {
               name "left_arm"
-              translation -0.18 0.15 0
+              translation -0.18 0.05 0         # Vị trí tay trái
               children [
                 Shape {
                   appearance Appearance {
                     material Material {
-                      diffuseColor 0.5 0.3 0.1   # Màu nâu cho tay
+                      diffuseColor 0.5 0.3 0.1 # Màu tay: nâu đất
                     }
                   }
                   geometry Box {
@@ -56,17 +58,17 @@ PROTO demoRobot[
                 }
               ]
               boundingObject Box {
-                size 0.05 0.05 0.1
+                size 0.05 0.05 0.1             # Vật thể dùng để mô phỏng va chạm
               }
-              physics Physics {}
+              physics Physics {}               # Kích hoạt mô phỏng vật lý cho tay
             }
           },
 
-          # --- Tay phải (servo) ---
+          # --- Tay phải ---
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 1 0 0
-              anchor 0.18 0.15 0
+              anchor 0.18 0.05 0
             }
             device [
               RotationalMotor {
@@ -76,7 +78,7 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "right_arm"
-              translation 0.18 0.15 0
+              translation 0.18 0.05 0
               children [
                 Shape {
                   appearance Appearance {
@@ -96,11 +98,11 @@ PROTO demoRobot[
             }
           },
 
-          # --- Đầu (servo) ---
+          # --- Đầu robot gắn servo quay trái/phải ---
           HingeJoint {
             jointParameters HingeJointParameters {
-              axis 0 1 0                     # Quay quanh trục Y (trái/phải)
-              anchor 0 0.25 0
+              axis 0 1 0                       # Trục Y để quay trái/phải
+              anchor 0 0.15 0                  # Gắn đầu lên phía trên thân
             }
             device [
               RotationalMotor {
@@ -110,16 +112,16 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "head"
-              translation 0 0.25 0
+              translation 0 0.15 0
               children [
                 Shape {
                   appearance Appearance {
                     material Material {
-                      diffuseColor 0.8 0.5 0.2
+                      diffuseColor 0.8 0.5 0.2 # Màu vàng đậm
                     }
                   }
                   geometry Box {
-                    size 0.06 0.06 0.06       # Kích thước đầu robot
+                    size 0.06 0.06 0.06         # Kích thước đầu robot
                   }
                 }
               ]
@@ -133,8 +135,8 @@ PROTO demoRobot[
           # --- Bánh xe trái ---
           HingeJoint {
             jointParameters HingeJointParameters {
-              axis 1 0 0
-              anchor -0.15 0.05 0.1           # Tâm xoay bánh trái
+              axis 1 0 0                        # Trục quay là trục X (quay tới lui)
+              anchor -0.15 -0.1 0.1             # Gắn gần sát thân
             }
             device [
               RotationalMotor {
@@ -144,13 +146,13 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "left_wheel"
-              translation -0.15 0.05 0.1
-              rotation 0 1 0 1.5708           # Xoay hình trụ bánh xe đúng hướng
+              translation -0.15 -0.1 0.1
+              rotation 0 1 0 1.5708             # Quay hình trụ để nằm ngang
               children [
                 Shape {
                   appearance Appearance {
                     material Material {
-                      diffuseColor 0.1 0.1 0.1
+                      diffuseColor 0.1 0.1 0.1  # Màu bánh xe: đen
                     }
                   }
                   geometry Cylinder {
@@ -171,7 +173,7 @@ PROTO demoRobot[
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 1 0 0
-              anchor 0.15 0.05 0.1
+              anchor 0.15 -0.1 0.1
             }
             device [
               RotationalMotor {
@@ -181,7 +183,7 @@ PROTO demoRobot[
             ]
             endPoint Solid {
               name "right_wheel"
-              translation 0.15 0.05 0.1
+              translation 0.15 -0.1 0.1
               rotation 0 1 0 1.5708
               children [
                 Shape {
@@ -204,9 +206,20 @@ PROTO demoRobot[
             }
           }
         ]
-        physics Physics {}
+
+        # Khối vật lý dùng để tính toán va chạm và khối lượng thân chính
+        boundingObject Box {
+          size 0.25 0.2 0.2                     # Kích thước khớp với hình dạng thân
+        }
+
+        # Mô phỏng vật lý: trọng lượng 2kg
+        physics Physics {
+          mass 2.0
+        }
       }
     ]
-    controller "wall-e-controller"            # Tên controller sẽ điều khiển robot
+
+    # Tên controller Python/C/C++ sẽ điều khiển robot này
+    controller "wall-e-controller"
   }
 }
